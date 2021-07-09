@@ -1,0 +1,9 @@
+# VSCode exclusions
+.vscode/
+
+# Python exclusions
+__pycache__/
+build/
+dist/
+*.egg-info/
+*.pyc
