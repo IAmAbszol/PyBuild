@@ -92,9 +92,8 @@ def install(environment, *packages : Union[Package, str], **kwargs) -> Union[Pat
         processed_k = k.replace('_', '-')
         if str(v) == 'True':
             command_string.append('--{}'.format(processed_k))
-        elif str(v) != 'False':
+        elif str(v) not in ['False', 'None']:
             command_string.append('--{} {}'.format(processed_k, v))
-
     rc = process_utils.create_process(str(environment.python()), '-m pip install {} {}'.format(' '.join(map(str, packages)) if packages else '', ' '.join(command_string)))
     if rc != 0:
         raise ValueError('Failed to install.')
@@ -142,7 +141,7 @@ def uninstall(environment, *packages : Union[Package, str], **kwargs) -> bool:
         processed_k = k.replace('_', '-')
         if str(v) == 'True':
             command_string.append('--{}'.format(processed_k))
-        else:
+        elif str(v) not in ['False', 'None']:
             command_string.append('--{} {}'.format(processed_k, v))
 
     rc = process_utils.create_process(str(environment.python()), '-m pip uninstall -y {} {}'.format(' '.join(map(str, packages)) if packages else '', ' '.join(command_string)))

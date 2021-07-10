@@ -130,7 +130,7 @@ def install(environment, *packages : Union[Package, str], **kwargs) -&gt; Union[
         processed_k = k.replace(&#39;_&#39;, &#39;-&#39;)
         if str(v) == &#39;True&#39;:
             command_string.append(&#39;--{}&#39;.format(processed_k))
-        elif str(v) != &#39;False&#39;:
+        elif str(v) not in [&#39;False&#39;, &#39;None&#39;]:
             command_string.append(&#39;--{} {}&#39;.format(processed_k, v))
 
     rc = process_utils.create_process(str(environment.python()), &#39;-m pip install {} {}&#39;.format(&#39; &#39;.join(map(str, packages)) if packages else &#39;&#39;, &#39; &#39;.join(command_string)))
@@ -180,7 +180,7 @@ def uninstall(environment, *packages : Union[Package, str], **kwargs) -&gt; bool
         processed_k = k.replace(&#39;_&#39;, &#39;-&#39;)
         if str(v) == &#39;True&#39;:
             command_string.append(&#39;--{}&#39;.format(processed_k))
-        else:
+        elif str(v) not in [&#39;False&#39;, &#39;None&#39;]:
             command_string.append(&#39;--{} {}&#39;.format(processed_k, v))
 
     rc = process_utils.create_process(str(environment.python()), &#39;-m pip uninstall -y {} {}&#39;.format(&#39; &#39;.join(map(str, packages)) if packages else &#39;&#39;, &#39; &#39;.join(command_string)))
@@ -315,7 +315,7 @@ def upgrade(environment, *packages : Package) -&gt; bool:
         processed_k = k.replace(&#39;_&#39;, &#39;-&#39;)
         if str(v) == &#39;True&#39;:
             command_string.append(&#39;--{}&#39;.format(processed_k))
-        elif str(v) != &#39;False&#39;:
+        elif str(v) not in [&#39;False&#39;, &#39;None&#39;]:
             command_string.append(&#39;--{} {}&#39;.format(processed_k, v))
 
     rc = process_utils.create_process(str(environment.python()), &#39;-m pip install {} {}&#39;.format(&#39; &#39;.join(map(str, packages)) if packages else &#39;&#39;, &#39; &#39;.join(command_string)))
@@ -415,7 +415,7 @@ to happen outright.</dd>
         processed_k = k.replace(&#39;_&#39;, &#39;-&#39;)
         if str(v) == &#39;True&#39;:
             command_string.append(&#39;--{}&#39;.format(processed_k))
-        else:
+        elif str(v) not in [&#39;False&#39;, &#39;None&#39;]:
             command_string.append(&#39;--{} {}&#39;.format(processed_k, v))
 
     rc = process_utils.create_process(str(environment.python()), &#39;-m pip uninstall -y {} {}&#39;.format(&#39; &#39;.join(map(str, packages)) if packages else &#39;&#39;, &#39; &#39;.join(command_string)))

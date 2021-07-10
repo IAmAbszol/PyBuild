@@ -13,3 +13,6 @@ from pathlib import Path
 
 from pybuild.utils import file_utils, os_utils, process_utils
 
+
+def make():
+    pass
