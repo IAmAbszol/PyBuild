@@ -17,10 +17,11 @@
 import logging
 import pathlib
 import os
+import struct
 import sys
 
 from tempfile import NamedTemporaryFile
-from typing import List, Union
+from typing import List, Tuple, Union
 
 from pybuild import pip
 from pybuild.utils import file_utils, os_utils, process_utils
@@ -108,6 +109,24 @@ class Environment:
             os_utils.remove_directory(str(self.__environment_path))
 
 
+    def dependency_exists(self, package) -> Tuple[str, str]:
+        """Checks if a dependency exists.
+
+        Args:
+            package: Package to check if it exists.
+
+        Returns:
+            Tuple of (package name, version) when the package exists else None.
+        """
+        pkg_info = None
+        output = pip.list(self, log_output=False)
+        for line in output:
+            installed_package = line.rstrip().split(' ')
+            if package == installed_package[0]:
+                pkg_info = (installed_package[0], installed_package[-1])
+        return pkg_info
+
+
     def executables(self) -> pathlib.Path:
         """Returns the listing of the environments executables (Scripts: Windows, bin: Linux)
 
@@ -120,6 +139,18 @@ class Environment:
             return [x for x in os_utils.retrieve_directory_listing(self.__env_name, 'bin', 'python*') if x.is_file()]
         else:
             raise os_utils.PyBuildOSError()
+
+
+    def info(self) -> Tuple[str, int]:
+        """Reports environment information.
+
+        Some build scripts may want to know the information of the environment being used,
+        often this may be if the system requires a specific Python to launch the build script with.
+
+        Returns:
+            Tuple of (Python Version, Python Bit)
+        """
+        return (sys.version_info, struct.calcsize('P') * 8)
 
 
     def libs(self) -> List[pathlib.Path]:

@@ -96,7 +96,7 @@ def make(environment : Environment,
     if rc != 0:
         raise ValueError(&#39;Failed to create documenation.&#39;)
     logging.info(f&#39;Successfully made Pdoc documentation.&#39;)
-    out_path = Path(output_dir, package)
+    out_path = Path(Path.cwd(), output_dir, package)
     if not out_path.exists():
         raise FileNotFoundError(&#39;Pdoc documentation failed to write to designated location.&#39;)
     return out_path</code></pre>
@@ -169,7 +169,7 @@ Additional options have been provided by Pdoc that supports custom templates, et
     if rc != 0:
         raise ValueError(&#39;Failed to create documenation.&#39;)
     logging.info(f&#39;Successfully made Pdoc documentation.&#39;)
-    out_path = Path(output_dir, package)
+    out_path = Path(Path.cwd(), output_dir, package)
     if not out_path.exists():
         raise FileNotFoundError(&#39;Pdoc documentation failed to write to designated location.&#39;)
     return out_path</code></pre>

@@ -74,7 +74,8 @@ class VirtualEnv(pip.Package):
     def __init__(self, environment : Environment, version : str = None, user : bool = False):
         super().__init__(&#39;virtualenv&#39;, version=version)
 
-        pip.install(environment, self, user=user)
+        if environment.dependency_exists(&#39;virtualenv&#39;) is None:
+            pip.install(environment, self, user=user)
         if process_utils.create_process(str(environment.python()), f&#39;-m virtualenv {environment.name()}&#39;) != 0:
             raise OSError(&#39;Failed to create virtual environment.&#39;)
         environment._find_interpreter()</code></pre>
@@ -112,7 +113,8 @@ class VirtualEnv(pip.Package):
     def __init__(self, environment : Environment, version : str = None, user : bool = False):
         super().__init__(&#39;virtualenv&#39;, version=version)
 
-        pip.install(environment, self, user=user)
+        if environment.dependency_exists(&#39;virtualenv&#39;) is None:
+            pip.install(environment, self, user=user)
         if process_utils.create_process(str(environment.python()), f&#39;-m virtualenv {environment.name()}&#39;) != 0:
             raise OSError(&#39;Failed to create virtual environment.&#39;)
         environment._find_interpreter()</code></pre>

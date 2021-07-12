@@ -42,9 +42,27 @@ configurability is everything.</p>
 &#34;&#34;&#34;
 import logging
 
-from pathlib import Path
+from pybuild import pip
+from pybuild.environment import Environment
+from pybuild.utils import process_utils
 
-from pybuild.utils import file_utils, os_utils, process_utils</code></pre>
+
+def make_executable(environment : Environment, command : str) -&gt; int:
+    &#34;&#34;&#34;Creates the executable using PyInstaller.
+
+    PyInstaller creates executable binaries for Windows, Linux, and macOS. The arguments provided must match what&#39;s passed 
+    to PyInstaller command, later this function will be refined.
+
+    Args:
+        environment: Environment where PyBuild exists, this was initialized during the Environment initialization stage.
+        command: Command to pass to PyInstaller.
+    
+    Returns:
+        Return code of the subprocess executed with PyInstaller.
+    &#34;&#34;&#34;
+    if environment.dependency_exists(&#39;pyinstaller&#39;) is None:
+        pip.install(&#39;pyinstaller&#39;)
+    return process_utils.create_process(str(environment.python()), command)</code></pre>
 </details>
 </section>
 <section>
@@ -52,6 +70,47 @@ from pybuild.utils import file_utils, os_utils, process_utils</code></pre>
 <section>
 </section>
 <section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="pybuild.pyinstaller.make_executable"><code class="name flex">
+<span>def <span class="ident">make_executable</span></span>(<span>environment: <a title="pybuild.environment.Environment" href="../environment.html#pybuild.environment.Environment">Environment</a>, command: str) ‑> int</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Creates the executable using PyInstaller.</p>
+<p>PyInstaller creates executable binaries for Windows, Linux, and macOS. The arguments provided must match what's passed
+to PyInstaller command, later this function will be refined.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>environment</code></strong></dt>
+<dd>Environment where PyBuild exists, this was initialized during the Environment initialization stage.</dd>
+<dt><strong><code>command</code></strong></dt>
+<dd>Command to pass to PyInstaller.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>Return code of the subprocess executed with PyInstaller.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def make_executable(environment : Environment, command : str) -&gt; int:
+    &#34;&#34;&#34;Creates the executable using PyInstaller.
+
+    PyInstaller creates executable binaries for Windows, Linux, and macOS. The arguments provided must match what&#39;s passed 
+    to PyInstaller command, later this function will be refined.
+
+    Args:
+        environment: Environment where PyBuild exists, this was initialized during the Environment initialization stage.
+        command: Command to pass to PyInstaller.
+    
+    Returns:
+        Return code of the subprocess executed with PyInstaller.
+    &#34;&#34;&#34;
+    if environment.dependency_exists(&#39;pyinstaller&#39;) is None:
+        pip.install(&#39;pyinstaller&#39;)
+    return process_utils.create_process(str(environment.python()), command)</code></pre>
+</details>
+</dd>
+</dl>
 </section>
 <section>
 </section>
@@ -65,6 +124,11 @@ from pybuild.utils import file_utils, os_utils, process_utils</code></pre>
 <li><h3>Super-module</h3>
 <ul>
 <li><code><a title="pybuild" href="../index.html">pybuild</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="pybuild.pyinstaller.make_executable" href="#pybuild.pyinstaller.make_executable">make_executable</a></code></li>
 </ul>
 </li>
 </ul>

@@ -9,10 +9,24 @@
 """
 import logging
 
-from pathlib import Path
+from pybuild import pip
+from pybuild.environment import Environment
+from pybuild.utils import process_utils
 
-from pybuild.utils import file_utils, os_utils, process_utils
 
+def make_executable(environment : Environment, command : str) -> int:
+    """Creates the executable using PyInstaller.
 
-def make():
-    pass
+    PyInstaller creates executable binaries for Windows, Linux, and macOS. The arguments provided must match what's passed 
+    to PyInstaller command, later this function will be refined.
+
+    Args:
+        environment: Environment where PyBuild exists, this was initialized during the Environment initialization stage.
+        command: Command to pass to PyInstaller.
+    
+    Returns:
+        Return code of the subprocess executed with PyInstaller.
+    """
+    if environment.dependency_exists('pyinstaller') is None:
+        pip.install('pyinstaller')
+    return process_utils.create_process(str(environment.python()), command)

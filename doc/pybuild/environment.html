@@ -54,10 +54,11 @@ with a cleaned system Python.</p>
 import logging
 import pathlib
 import os
+import struct
 import sys
 
 from tempfile import NamedTemporaryFile
-from typing import List, Union
+from typing import List, Tuple, Union
 
 from pybuild import pip
 from pybuild.utils import file_utils, os_utils, process_utils
@@ -145,6 +146,24 @@ class Environment:
             os_utils.remove_directory(str(self.__environment_path))
 
 
+    def dependency_exists(self, package) -&gt; Tuple[str, str]:
+        &#34;&#34;&#34;Checks if a dependency exists.
+
+        Args:
+            package: Package to check if it exists.
+
+        Returns:
+            Tuple of (package name, version) when the package exists else None.
+        &#34;&#34;&#34;
+        pkg_info = None
+        output = pip.list(self, log_output=False)
+        for line in output:
+            installed_package = line.rstrip().split(&#39; &#39;)
+            if package == installed_package[0]:
+                pkg_info = (installed_package[0], installed_package[-1])
+        return pkg_info
+
+
     def executables(self) -&gt; pathlib.Path:
         &#34;&#34;&#34;Returns the listing of the environments executables (Scripts: Windows, bin: Linux)
 
@@ -157,6 +176,18 @@ class Environment:
             return [x for x in os_utils.retrieve_directory_listing(self.__env_name, &#39;bin&#39;, &#39;python*&#39;) if x.is_file()]
         else:
             raise os_utils.PyBuildOSError()
+
+
+    def info(self) -&gt; Tuple[str, int]:
+        &#34;&#34;&#34;Reports environment information.
+
+        Some build scripts may want to know the information of the environment being used,
+        often this may be if the system requires a specific Python to launch the build script with.
+
+        Returns:
+            Tuple of (Python Version, Python Bit)
+        &#34;&#34;&#34;
+        return (sys.version_info, struct.calcsize(&#39;P&#39;) * 8)
 
 
     def libs(self) -&gt; List[pathlib.Path]:
@@ -325,6 +356,24 @@ class Environment:
             os_utils.remove_directory(str(self.__environment_path))
 
 
+    def dependency_exists(self, package) -&gt; Tuple[str, str]:
+        &#34;&#34;&#34;Checks if a dependency exists.
+
+        Args:
+            package: Package to check if it exists.
+
+        Returns:
+            Tuple of (package name, version) when the package exists else None.
+        &#34;&#34;&#34;
+        pkg_info = None
+        output = pip.list(self, log_output=False)
+        for line in output:
+            installed_package = line.rstrip().split(&#39; &#39;)
+            if package == installed_package[0]:
+                pkg_info = (installed_package[0], installed_package[-1])
+        return pkg_info
+
+
     def executables(self) -&gt; pathlib.Path:
         &#34;&#34;&#34;Returns the listing of the environments executables (Scripts: Windows, bin: Linux)
 
@@ -337,6 +386,18 @@ class Environment:
             return [x for x in os_utils.retrieve_directory_listing(self.__env_name, &#39;bin&#39;, &#39;python*&#39;) if x.is_file()]
         else:
             raise os_utils.PyBuildOSError()
+
+
+    def info(self) -&gt; Tuple[str, int]:
+        &#34;&#34;&#34;Reports environment information.
+
+        Some build scripts may want to know the information of the environment being used,
+        often this may be if the system requires a specific Python to launch the build script with.
+
+        Returns:
+            Tuple of (Python Version, Python Bit)
+        &#34;&#34;&#34;
+        return (sys.version_info, struct.calcsize(&#39;P&#39;) * 8)
 
 
     def libs(self) -&gt; List[pathlib.Path]:
@@ -425,6 +486,40 @@ environment is currently accessed by other processes then rmtree will fail.</p><
         os_utils.remove_directory(str(self.__environment_path))</code></pre>
 </details>
 </dd>
+<dt id="pybuild.environment.Environment.dependency_exists"><code class="name flex">
+<span>def <span class="ident">dependency_exists</span></span>(<span>self, package) ‑> Tuple[str, str]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Checks if a dependency exists.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>package</code></strong></dt>
+<dd>Package to check if it exists.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>Tuple of (package name, version) when the package exists else None.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dependency_exists(self, package) -&gt; Tuple[str, str]:
+    &#34;&#34;&#34;Checks if a dependency exists.
+
+    Args:
+        package: Package to check if it exists.
+
+    Returns:
+        Tuple of (package name, version) when the package exists else None.
+    &#34;&#34;&#34;
+    pkg_info = None
+    output = pip.list(self, log_output=False)
+    for line in output:
+        installed_package = line.rstrip().split(&#39; &#39;)
+        if package == installed_package[0]:
+            pkg_info = (installed_package[0], installed_package[-1])
+    return pkg_info</code></pre>
+</details>
+</dd>
 <dt id="pybuild.environment.Environment.executables"><code class="name flex">
 <span>def <span class="ident">executables</span></span>(<span>self) ‑> pathlib.Path</span>
 </code></dt>
@@ -448,6 +543,31 @@ environment is currently accessed by other processes then rmtree will fail.</p><
         return [x for x in os_utils.retrieve_directory_listing(self.__env_name, &#39;bin&#39;, &#39;python*&#39;) if x.is_file()]
     else:
         raise os_utils.PyBuildOSError()</code></pre>
+</details>
+</dd>
+<dt id="pybuild.environment.Environment.info"><code class="name flex">
+<span>def <span class="ident">info</span></span>(<span>self) ‑> Tuple[str, int]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Reports environment information.</p>
+<p>Some build scripts may want to know the information of the environment being used,
+often this may be if the system requires a specific Python to launch the build script with.</p>
+<h2 id="returns">Returns</h2>
+<p>Tuple of (Python Version, Python Bit)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def info(self) -&gt; Tuple[str, int]:
+    &#34;&#34;&#34;Reports environment information.
+
+    Some build scripts may want to know the information of the environment being used,
+    often this may be if the system requires a specific Python to launch the build script with.
+
+    Returns:
+        Tuple of (Python Version, Python Bit)
+    &#34;&#34;&#34;
+    return (sys.version_info, struct.calcsize(&#39;P&#39;) * 8)</code></pre>
 </details>
 </dd>
 <dt id="pybuild.environment.Environment.libs"><code class="name flex">
@@ -593,7 +713,9 @@ additional dependencies, etc. This function is only to be used by experienced us
 <h4><code><a title="pybuild.environment.Environment" href="#pybuild.environment.Environment">Environment</a></code></h4>
 <ul class="two-column">
 <li><code><a title="pybuild.environment.Environment.cleanup" href="#pybuild.environment.Environment.cleanup">cleanup</a></code></li>
+<li><code><a title="pybuild.environment.Environment.dependency_exists" href="#pybuild.environment.Environment.dependency_exists">dependency_exists</a></code></li>
 <li><code><a title="pybuild.environment.Environment.executables" href="#pybuild.environment.Environment.executables">executables</a></code></li>
+<li><code><a title="pybuild.environment.Environment.info" href="#pybuild.environment.Environment.info">info</a></code></li>
 <li><code><a title="pybuild.environment.Environment.libs" href="#pybuild.environment.Environment.libs">libs</a></code></li>
 <li><code><a title="pybuild.environment.Environment.name" href="#pybuild.environment.Environment.name">name</a></code></li>
 <li><code><a title="pybuild.environment.Environment.python" href="#pybuild.environment.Environment.python">python</a></code></li>

@@ -30,7 +30,8 @@ class VirtualEnv(pip.Package):
     def __init__(self, environment : Environment, version : str = None, user : bool = False):
         super().__init__('virtualenv', version=version)
 
-        pip.install(environment, self, user=user)
+        if environment.dependency_exists('virtualenv') is None:
+            pip.install(environment, self, user=user)
         if process_utils.create_process(str(environment.python()), f'-m virtualenv {environment.name()}') != 0:
             raise OSError('Failed to create virtual environment.')
         environment._find_interpreter()

@@ -52,7 +52,3 @@ PyBuild is rather new project that always has module integration in mind when de
 - Registering external modules to PyBuild, dynamic module loading would be required.
 - Add more modules! The suite right now has been trimmed down to personal usage of the modules but other virtual environments, documentation, etc are always welcomed.
 - Add master demo.
-
-### Known Bugs
-- macOS Big Sur can't install using absolute links, unknown. Bypass by
-  creating a new virtual environment and doing the build in there, creating a new virtual environment if desired.

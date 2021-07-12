@@ -16,3 +16,5 @@ with Environment('pybuildenv') as environment:
     VirtualEnv(environment)
     pip.install(environment, 'pyinstaller', no_cache_dir=True)
     pip.list(environment)
+    print(environment.dependency_exists('pyinstaller'))
+    print(environment.dependency_exists('matplotlib'))
