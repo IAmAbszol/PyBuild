@@ -26,11 +26,11 @@ from pybuild.utils import process_utils
 
 
 class VirtualEnv(pip.Package):
-
+    """Virtual Environment Class."""
     def __init__(self, environment : Environment, version : str = None, user : bool = False):
         super().__init__('virtualenv', version=version)
-
-        if environment.dependency_exists('virtualenv') is None:
+        
+        if environment.dependency_exists('virtualenv') == (None, None):
             pip.install(environment, self, user=user)
         if process_utils.create_process(str(environment.python()), f'-m virtualenv {environment.name()}') != 0:
             raise OSError('Failed to create virtual environment.')

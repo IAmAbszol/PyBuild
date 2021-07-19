@@ -106,6 +106,28 @@ class Environment:
         raise FileNotFoundError(f&#39;Environment {self.__env_name} not found.&#39;)
 
 
+    def __asterix_patch(self, path : pathlib.Path, prefix : str) -&gt; Union[str, None]:
+        &#34;&#34;&#34;Returns the first file path that matches prefix.
+
+        pathlib.Path seems to not support regular expressions in the path name when iterating over directories.
+        To counteract this issue, matching the first instance and returning a path for now will be used.
+
+        Args:
+            path: Path to folder.
+            prefix: Prefix to try and attempt to match.
+
+        Returns:
+            Name to first matched instance, else None.
+        &#34;&#34;&#34;
+        found_path = None
+        if path.exists():
+            for subpath in path.iterdir():
+                if subpath.name.startswith(prefix) and subpath.is_dir():
+                    found_path = subpath.name
+                    break
+        return found_path
+
+
     def _find_interpreter(self) -&gt; pathlib.Path:
         &#34;&#34;&#34;Finds the Python interepter which is later used to access various executables and scripts inside the environment.
 
@@ -155,7 +177,7 @@ class Environment:
         Returns:
             Tuple of (package name, version) when the package exists else None.
         &#34;&#34;&#34;
-        pkg_info = None
+        pkg_info = (None, None)
         output = pip.list(self, log_output=False)
         for line in output:
             installed_package = line.rstrip().split(&#39; &#39;)
@@ -164,30 +186,30 @@ class Environment:
         return pkg_info
 
 
-    def executables(self) -&gt; pathlib.Path:
+    def executables(self) -&gt; List[pathlib.Path]:
         &#34;&#34;&#34;Returns the listing of the environments executables (Scripts: Windows, bin: Linux)
 
         Returns:
             List of files inside the executable directory.
         &#34;&#34;&#34;
         if os_utils.get_os() == os_utils.SupportedOS.WINDOWS:
-            return [x for x in os_utils.retrieve_directory_listing(self.__env_name, &#39;Scripts&#39;) if x.is_file()]
+            return [x for x in os_utils.retrieve_directory_listing(self.__environment_path, &#39;Scripts&#39;) if x.is_file()]
         elif os_utils.get_os() in [os_utils.SupportedOS.LINUX, os_utils.SupportedOS.MAC]:
-            return [x for x in os_utils.retrieve_directory_listing(self.__env_name, &#39;bin&#39;, &#39;python*&#39;) if x.is_file()]
+            return [x for x in os_utils.retrieve_directory_listing(self.__environment_path, &#39;bin&#39;) if x.is_file()]
         else:
             raise os_utils.PyBuildOSError()
 
 
-    def info(self) -&gt; Tuple[str, int]:
+    def info(self) -&gt; Tuple[tuple, int]:
         &#34;&#34;&#34;Reports environment information.
 
         Some build scripts may want to know the information of the environment being used,
         often this may be if the system requires a specific Python to launch the build script with.
 
         Returns:
-            Tuple of (Python Version, Python Bit)
+            Tuple of (sys.version_info, Python Bit)
         &#34;&#34;&#34;
-        return (sys.version_info, struct.calcsize(&#39;P&#39;) * 8)
+        return (tuple(sys.version_info), struct.calcsize(&#39;P&#39;) * 8)
 
 
     def libs(self) -&gt; List[pathlib.Path]:
@@ -197,9 +219,9 @@ class Environment:
             List of files inside the library directory.
         &#34;&#34;&#34;
         if os_utils.get_os() == os_utils.SupportedOS.WINDOWS:
-            return os_utils.retrieve_directory_listing(self.__env_name, &#39;Libs&#39;)
+            return os_utils.retrieve_directory_listing(self.__environment_path, &#39;Libs&#39;)
         elif os_utils.get_os() in [os_utils.SupportedOS.LINUX, os_utils.SupportedOS.MAC]:
-            return os_utils.retrieve_directory_listing(self.__env_name, &#39;lib/python*/&#39;)
+            return os_utils.retrieve_directory_listing(self.__environment_path, &#39;lib&#39;, self.__asterix_patch(pathlib.Path(self.__environment_path, &#39;lib&#39;), &#39;python&#39;))
         else:
             raise os_utils.PyBuildOSError()
 
@@ -316,6 +338,28 @@ class Environment:
         raise FileNotFoundError(f&#39;Environment {self.__env_name} not found.&#39;)
 
 
+    def __asterix_patch(self, path : pathlib.Path, prefix : str) -&gt; Union[str, None]:
+        &#34;&#34;&#34;Returns the first file path that matches prefix.
+
+        pathlib.Path seems to not support regular expressions in the path name when iterating over directories.
+        To counteract this issue, matching the first instance and returning a path for now will be used.
+
+        Args:
+            path: Path to folder.
+            prefix: Prefix to try and attempt to match.
+
+        Returns:
+            Name to first matched instance, else None.
+        &#34;&#34;&#34;
+        found_path = None
+        if path.exists():
+            for subpath in path.iterdir():
+                if subpath.name.startswith(prefix) and subpath.is_dir():
+                    found_path = subpath.name
+                    break
+        return found_path
+
+
     def _find_interpreter(self) -&gt; pathlib.Path:
         &#34;&#34;&#34;Finds the Python interepter which is later used to access various executables and scripts inside the environment.
 
@@ -365,7 +409,7 @@ class Environment:
         Returns:
             Tuple of (package name, version) when the package exists else None.
         &#34;&#34;&#34;
-        pkg_info = None
+        pkg_info = (None, None)
         output = pip.list(self, log_output=False)
         for line in output:
             installed_package = line.rstrip().split(&#39; &#39;)
@@ -374,30 +418,30 @@ class Environment:
         return pkg_info
 
 
-    def executables(self) -&gt; pathlib.Path:
+    def executables(self) -&gt; List[pathlib.Path]:
         &#34;&#34;&#34;Returns the listing of the environments executables (Scripts: Windows, bin: Linux)
 
         Returns:
             List of files inside the executable directory.
         &#34;&#34;&#34;
         if os_utils.get_os() == os_utils.SupportedOS.WINDOWS:
-            return [x for x in os_utils.retrieve_directory_listing(self.__env_name, &#39;Scripts&#39;) if x.is_file()]
+            return [x for x in os_utils.retrieve_directory_listing(self.__environment_path, &#39;Scripts&#39;) if x.is_file()]
         elif os_utils.get_os() in [os_utils.SupportedOS.LINUX, os_utils.SupportedOS.MAC]:
-            return [x for x in os_utils.retrieve_directory_listing(self.__env_name, &#39;bin&#39;, &#39;python*&#39;) if x.is_file()]
+            return [x for x in os_utils.retrieve_directory_listing(self.__environment_path, &#39;bin&#39;) if x.is_file()]
         else:
             raise os_utils.PyBuildOSError()
 
 
-    def info(self) -&gt; Tuple[str, int]:
+    def info(self) -&gt; Tuple[tuple, int]:
         &#34;&#34;&#34;Reports environment information.
 
         Some build scripts may want to know the information of the environment being used,
         often this may be if the system requires a specific Python to launch the build script with.
 
         Returns:
-            Tuple of (Python Version, Python Bit)
+            Tuple of (sys.version_info, Python Bit)
         &#34;&#34;&#34;
-        return (sys.version_info, struct.calcsize(&#39;P&#39;) * 8)
+        return (tuple(sys.version_info), struct.calcsize(&#39;P&#39;) * 8)
 
 
     def libs(self) -&gt; List[pathlib.Path]:
@@ -407,9 +451,9 @@ class Environment:
             List of files inside the library directory.
         &#34;&#34;&#34;
         if os_utils.get_os() == os_utils.SupportedOS.WINDOWS:
-            return os_utils.retrieve_directory_listing(self.__env_name, &#39;Libs&#39;)
+            return os_utils.retrieve_directory_listing(self.__environment_path, &#39;Libs&#39;)
         elif os_utils.get_os() in [os_utils.SupportedOS.LINUX, os_utils.SupportedOS.MAC]:
-            return os_utils.retrieve_directory_listing(self.__env_name, &#39;lib/python*/&#39;)
+            return os_utils.retrieve_directory_listing(self.__environment_path, &#39;lib&#39;, self.__asterix_patch(pathlib.Path(self.__environment_path, &#39;lib&#39;), &#39;python&#39;))
         else:
             raise os_utils.PyBuildOSError()
 
@@ -511,7 +555,7 @@ environment is currently accessed by other processes then rmtree will fail.</p><
     Returns:
         Tuple of (package name, version) when the package exists else None.
     &#34;&#34;&#34;
-    pkg_info = None
+    pkg_info = (None, None)
     output = pip.list(self, log_output=False)
     for line in output:
         installed_package = line.rstrip().split(&#39; &#39;)
@@ -521,7 +565,7 @@ environment is currently accessed by other processes then rmtree will fail.</p><
 </details>
 </dd>
 <dt id="pybuild.environment.Environment.executables"><code class="name flex">
-<span>def <span class="ident">executables</span></span>(<span>self) ‑> pathlib.Path</span>
+<span>def <span class="ident">executables</span></span>(<span>self) ‑> List[pathlib.Path]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Returns the listing of the environments executables (Scripts: Windows, bin: Linux)</p>
@@ -531,43 +575,43 @@ environment is currently accessed by other processes then rmtree will fail.</p><
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def executables(self) -&gt; pathlib.Path:
+<pre><code class="python">def executables(self) -&gt; List[pathlib.Path]:
     &#34;&#34;&#34;Returns the listing of the environments executables (Scripts: Windows, bin: Linux)
 
     Returns:
         List of files inside the executable directory.
     &#34;&#34;&#34;
     if os_utils.get_os() == os_utils.SupportedOS.WINDOWS:
-        return [x for x in os_utils.retrieve_directory_listing(self.__env_name, &#39;Scripts&#39;) if x.is_file()]
+        return [x for x in os_utils.retrieve_directory_listing(self.__environment_path, &#39;Scripts&#39;) if x.is_file()]
     elif os_utils.get_os() in [os_utils.SupportedOS.LINUX, os_utils.SupportedOS.MAC]:
-        return [x for x in os_utils.retrieve_directory_listing(self.__env_name, &#39;bin&#39;, &#39;python*&#39;) if x.is_file()]
+        return [x for x in os_utils.retrieve_directory_listing(self.__environment_path, &#39;bin&#39;) if x.is_file()]
     else:
         raise os_utils.PyBuildOSError()</code></pre>
 </details>
 </dd>
 <dt id="pybuild.environment.Environment.info"><code class="name flex">
-<span>def <span class="ident">info</span></span>(<span>self) ‑> Tuple[str, int]</span>
+<span>def <span class="ident">info</span></span>(<span>self) ‑> Tuple[tuple, int]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Reports environment information.</p>
 <p>Some build scripts may want to know the information of the environment being used,
 often this may be if the system requires a specific Python to launch the build script with.</p>
 <h2 id="returns">Returns</h2>
-<p>Tuple of (Python Version, Python Bit)</p></div>
+<p>Tuple of (sys.version_info, Python Bit)</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def info(self) -&gt; Tuple[str, int]:
+<pre><code class="python">def info(self) -&gt; Tuple[tuple, int]:
     &#34;&#34;&#34;Reports environment information.
 
     Some build scripts may want to know the information of the environment being used,
     often this may be if the system requires a specific Python to launch the build script with.
 
     Returns:
-        Tuple of (Python Version, Python Bit)
+        Tuple of (sys.version_info, Python Bit)
     &#34;&#34;&#34;
-    return (sys.version_info, struct.calcsize(&#39;P&#39;) * 8)</code></pre>
+    return (tuple(sys.version_info), struct.calcsize(&#39;P&#39;) * 8)</code></pre>
 </details>
 </dd>
 <dt id="pybuild.environment.Environment.libs"><code class="name flex">
@@ -588,9 +632,9 @@ often this may be if the system requires a specific Python to launch the build s
         List of files inside the library directory.
     &#34;&#34;&#34;
     if os_utils.get_os() == os_utils.SupportedOS.WINDOWS:
-        return os_utils.retrieve_directory_listing(self.__env_name, &#39;Libs&#39;)
+        return os_utils.retrieve_directory_listing(self.__environment_path, &#39;Libs&#39;)
     elif os_utils.get_os() in [os_utils.SupportedOS.LINUX, os_utils.SupportedOS.MAC]:
-        return os_utils.retrieve_directory_listing(self.__env_name, &#39;lib/python*/&#39;)
+        return os_utils.retrieve_directory_listing(self.__environment_path, &#39;lib&#39;, self.__asterix_patch(pathlib.Path(self.__environment_path, &#39;lib&#39;), &#39;python&#39;))
     else:
         raise os_utils.PyBuildOSError()</code></pre>
 </details>

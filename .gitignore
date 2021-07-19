@@ -5,6 +5,7 @@
 .vscode/
 
 # Python exclusions
+*.py[cod]
 __pycache__/
 build/
 dist/

@@ -70,11 +70,11 @@ from pybuild.utils import process_utils
 
 
 class VirtualEnv(pip.Package):
-
+    &#34;&#34;&#34;Virtual Environment Class.&#34;&#34;&#34;
     def __init__(self, environment : Environment, version : str = None, user : bool = False):
         super().__init__(&#39;virtualenv&#39;, version=version)
-
-        if environment.dependency_exists(&#39;virtualenv&#39;) is None:
+        
+        if environment.dependency_exists(&#39;virtualenv&#39;) == (None, None):
             pip.install(environment, self, user=user)
         if process_utils.create_process(str(environment.python()), f&#39;-m virtualenv {environment.name()}&#39;) != 0:
             raise OSError(&#39;Failed to create virtual environment.&#39;)
@@ -95,7 +95,7 @@ class VirtualEnv(pip.Package):
 <span>(</span><span>environment: <a title="pybuild.environment.Environment" href="../environment.html#pybuild.environment.Environment">Environment</a>, version: str = None, user: bool = False)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Package class handles generics.</p>
+<div class="desc"><p>Virtual Environment Class.</p>
 <p>Initialization function of the class.</p>
 <h2 id="args">Args</h2>
 <dl>
@@ -109,11 +109,11 @@ class VirtualEnv(pip.Package):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class VirtualEnv(pip.Package):
-
+    &#34;&#34;&#34;Virtual Environment Class.&#34;&#34;&#34;
     def __init__(self, environment : Environment, version : str = None, user : bool = False):
         super().__init__(&#39;virtualenv&#39;, version=version)
-
-        if environment.dependency_exists(&#39;virtualenv&#39;) is None:
+        
+        if environment.dependency_exists(&#39;virtualenv&#39;) == (None, None):
             pip.install(environment, self, user=user)
         if process_utils.create_process(str(environment.python()), f&#39;-m virtualenv {environment.name()}&#39;) != 0:
             raise OSError(&#39;Failed to create virtual environment.&#39;)
