@@ -62,6 +62,18 @@ def process_requirements(requirements : Path) -> bool:
         raise FileNotFoundError(f'Unable to find requirements, path provided {str(requirements)}.')
 
 
+def touch(dst):
+    """Creates a file.
+
+    Creates a file on Windows, Linux or Mac dependening on the file provided in dst.s
+    
+    Args:
+        dst: File to create.s
+    """
+    with open(dst, 'w') as tmp:
+        pass
+
+
 def validate_url(url):
     
     # URL regex validation from Django

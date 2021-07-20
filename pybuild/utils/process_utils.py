@@ -4,6 +4,8 @@ import subprocess
 
 from threading import Thread
 
+from pybuild.utils import os_utils
+
 
 class _AsyncLoggingThread(Thread):
     """Async Logging Thread class"""
@@ -68,7 +70,7 @@ def create_process(executable : str, command : str, wait : bool = True, log_outp
     async_threads = []
     # processed_command = shlex.join([executable, command])
     processed_command = ' '.join([executable, command])
-    process = subprocess.Popen(processed_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=os.environ, shell=True)
+    process = subprocess.Popen(processed_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=os.environ, shell=os_utils.get_os() != os_utils.SupportedOS.WINDOWS)
 
     for stream, log_type in [(process.stdout, logging.info if log_output else None), (process.stderr, logging.error if log_output else None)]:
         async_threads.append(_AsyncLoggingThread(process, stream, logger=log_type, callback=callback_func))

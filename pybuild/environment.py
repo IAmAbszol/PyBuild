@@ -182,7 +182,7 @@ class Environment:
             List of files inside the library directory.
         """
         if os_utils.get_os() == os_utils.SupportedOS.WINDOWS:
-            return os_utils.retrieve_directory_listing(self.__environment_path, 'Libs')
+            return os_utils.retrieve_directory_listing(self.__environment_path, 'Lib')
         elif os_utils.get_os() in [os_utils.SupportedOS.LINUX, os_utils.SupportedOS.MAC]:
             return os_utils.retrieve_directory_listing(self.__environment_path, 'lib', self.__asterix_patch(pathlib.Path(self.__environment_path, 'lib'), 'python'))
         else:

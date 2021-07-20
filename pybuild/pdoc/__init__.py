@@ -57,12 +57,11 @@ def make(environment : Environment,
             command_string.append('--{} {}'.format(processed_arg, eval(arg)))
 
     pip.install(environment, 'pdoc3', **kwargs)
-    print('-m pdoc {} {}'.format(' '.join(command_string), package))
     rc = process_utils.create_process(str(environment.python()), '-m pdoc {} {}'.format(' '.join(command_string), package))
     if rc != 0:
         raise ValueError('Failed to create documenation.')
     logging.info(f'Successfully made Pdoc documentation.')
-    out_path = Path(Path.cwd(), output_dir, package)
+    out_path = Path(Path.cwd(), output_dir, Path(package).name)
     if not out_path.exists():
         raise FileNotFoundError('Pdoc documentation failed to write to designated location.')
     return out_path

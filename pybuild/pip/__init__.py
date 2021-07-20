@@ -119,7 +119,7 @@ def list(environment, log_output : bool = True) -> List[str]:
     captured_output = []
     rc = process_utils.create_process(str(environment.python()), '-m pip list', log_output=log_output, callback_func=captured_output.append)
     if rc != 0:
-        raise ValueError('Failed to uninstall.')
+        raise ValueError('Failed to list.')
     return captured_output
 
 
