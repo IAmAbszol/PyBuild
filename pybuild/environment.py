@@ -31,7 +31,10 @@ from pybuild.utils import file_utils, os_utils, process_utils
 # __del__ occurs.
 class Environment:
 
-    def __init__(self, env_name : str):
+    def __init__(self, env_name : str, 
+                       minimum_required_python : tuple = (3, 7), 
+                       maximum_required_python : tuple = (3, 9), 
+                       supported_bit : tuple = (32,64)):
         """Creates an Environment for PyBuild to run in.
 
         Environment initialization function.
@@ -40,6 +43,15 @@ class Environment:
             env_name Environment name to operate in.
         """
         assert isinstance(env_name, str)
+        python_version, python_bit = self.info()
+        assert isinstance(minimum_required_python, tuple) and \
+               len(minimum_required_python) >= 1  and \
+               python_version >= minimum_required_python, f'Python required minimum version {minimum_required_python}, received {python_version}.'
+        assert isinstance(maximum_required_python, tuple) and \
+               len(maximum_required_python) >= 1 and \
+               python_version < maximum_required_python, f'Python required maximum version {maximum_required_python}, received {python_version}.'
+        assert isinstance(supported_bit, tuple) and \
+               python_bit in supported_bit, f'Python bit version must be in {supported_bit} but {python_bit} was found.'
         self.__interpreter = pathlib.Path(sys.executable)
         self.__env_name = env_name
         self.__environment_path = pathlib.Path(env_name)
