@@ -17,7 +17,7 @@ setup(
     author_email = 'kdarling95@yahoo.com',
     url = 'https://github.com/IAmAbszol/PyBuild',
     download_url = '',
-    keywords = ['build', 'python', 'automation', 'git'],
+    keywords = ['build', 'python', 'automation', 'git', 'framework'],
     classifiers = [],
     license = "MIT",
     include_package_data=True
