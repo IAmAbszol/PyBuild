@@ -34,13 +34,16 @@ class Environment:
     def __init__(self, env_name : str, 
                        minimum_required_python : tuple = (3, 7), 
                        maximum_required_python : tuple = (3, 9), 
-                       supported_bit : tuple = (32,64)):
+                       supported_bit : Union[tuple, int] = (32, 64)):
         """Creates an Environment for PyBuild to run in.
 
         Environment initialization function.
 
         Args:
-            env_name Environment name to operate in.
+            env_name: Environment name to operate in.
+            minimum_required_python: Python version needed, compared by >=.
+            maximum_required_python: Python version needed, compared by <.
+            supported_bit: Supported Python builds, int or tuple.
         """
         assert isinstance(env_name, str)
         python_version, python_bit = self.info()
@@ -50,8 +53,8 @@ class Environment:
         assert isinstance(maximum_required_python, tuple) and \
                len(maximum_required_python) >= 1 and \
                python_version < maximum_required_python, f'Python required maximum version {maximum_required_python}, received {python_version}.'
-        assert isinstance(supported_bit, tuple) and \
-               python_bit in supported_bit, f'Python bit version must be in {supported_bit} but {python_bit} was found.'
+        assert isinstance(supported_bit, [tuple, int]) and \
+               (python_bit in supported_bit) if isinstance(supported_bit, tuple) else python_bit == supported_bit, f'Python bit version must be in {supported_bit} but {python_bit} was found.'
         self.__interpreter = pathlib.Path(sys.executable)
         self.__env_name = env_name
         self.__environment_path = pathlib.Path(env_name)

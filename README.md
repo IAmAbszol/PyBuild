@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/IAmAbszol/PyBuild.svg?branch=dev)](https://travis-ci.com/IAmAbszol/PyBuild)
+
 # PyBuild
 ## Developed by Kyle Darling
 
