@@ -13,6 +13,7 @@ setup(
     version = __version__,
     description = 'PyBuild is a build environment for Python that starts from the virtual environment upwards, must be installed on base system prior to running.',
     long_description = long_description,
+    long_description_content_type='text/markdown',
     author = 'Kyle Darling',
     author_email = 'kdarling95@yahoo.com',
     url = 'https://github.com/IAmAbszol/PyBuild',

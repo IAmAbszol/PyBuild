@@ -227,6 +227,15 @@ class Environment:
         """
         return self.__interpreter
 
+    
+    def save_state(self):
+        """Saves the state of the environment.
+
+        Raises:
+            NotImplementedError: The function hasn't been implemented yet.
+        """
+        raise NotImplementedError('save_state hasn\'t been implemented yet.')
+
 
     def wipe(self) -> bool:
         """Wipes the entirety of the workspace of all installations.
