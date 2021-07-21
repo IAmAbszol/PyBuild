@@ -1,6 +1,7 @@
 import logging
 import os
 import subprocess
+import time
 
 from threading import Thread
 
@@ -48,7 +49,7 @@ class _AsyncLoggingThread(Thread):
         self._close = True
 
 
-def create_process(executable : str, command : str, wait : bool = True, log_output : bool = True, callback_func : callable = None) -> subprocess.Popen:
+def create_process(executable : str, command : str, wait : bool = True, log_output : bool = True, callback_func : callable = None, timeout : bool = False, timeout_sec : float = 30.0) -> subprocess.Popen:
     """Create processes for the system to run using subprocess.
 
     This function will create processes that are maintained by subprocess, the subprocess will yield a return code if function blocks (waits).
@@ -59,6 +60,8 @@ def create_process(executable : str, command : str, wait : bool = True, log_outp
         wait: Wait until program has terminated.
         log_output: Log processes output to terminal, some functions may want this turned off.
         callback_func: Callback function for process to call on the event of output.
+        timeout: Command should timeout to avoid potential issues with commands hanging.
+        timeout_sec: Seconds to wait until escape, if timeout is True.
 
     Returns:
         On wait = True, the function will yield the return code associated with the process.
@@ -78,6 +81,6 @@ def create_process(executable : str, command : str, wait : bool = True, log_outp
 
     if wait:
         process.wait()
-        [x.join() for x in async_threads]
+        [x.join() if timeout else x.join(timeout_sec) for x in async_threads]
         return process.poll()
     return process
