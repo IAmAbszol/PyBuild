@@ -53,7 +53,7 @@ class Environment:
         assert isinstance(maximum_required_python, tuple) and \
                len(maximum_required_python) >= 1 and \
                python_version < maximum_required_python, f'Python required maximum version {maximum_required_python}, received {python_version}.'
-        assert isinstance(supported_bit, [tuple, int]) and \
+        assert isinstance(supported_bit, (tuple, int)) and \
                (python_bit in supported_bit) if isinstance(supported_bit, tuple) else python_bit == supported_bit, f'Python bit version must be in {supported_bit} but {python_bit} was found.'
         self.__interpreter = pathlib.Path(sys.executable)
         self.__env_name = env_name
