@@ -27,7 +27,10 @@ def make_executable(environment : Environment, command : str) -> int:
     Returns:
         Return code of the subprocess executed with PyInstaller.
     """
-    if environment.dependency_exists('pyinstaller') is None:
+    if environment.dependency_exists('pyinstaller') == (None, None):
         pip.install(environment, 'pyinstaller')
-    pyinstaller_executable = [x for x in environment.executables() if 'pyinstaller' in x.name][0]
+    pyinstaller_executable = [x for x in environment.executables() if 'pyinstaller' in x.name]
+    if not pyinstaller_executable: 
+        raise FileNotFoundError('Unable to locate pyinstaller executable.')
+    pyinstaller_executable = pyinstaller_executable[0]
     return process_utils.create_process(str(pyinstaller_executable), command)

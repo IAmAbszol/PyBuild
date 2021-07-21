@@ -20,18 +20,31 @@
     The return value of VirtualEnv is typically useless. Packages currently are only used for displaying the package and version in a way for pip to understand.
 
 """
+from pathlib import Path
+
 from pybuild import pip
 from pybuild.environment import Environment
-from pybuild.utils import process_utils
+from pybuild.utils import os_utils, process_utils
 
 
 class VirtualEnv(pip.Package):
     """Virtual Environment Class."""
-    def __init__(self, environment : Environment, version : str = None, user : bool = False):
+    def __init__(self, environment : Environment, version : str = None, user : bool = False, clean : bool = False):
+        """Virtual Environment initialization function.
+
+        Args:
+            environment: Environment to use for VirtualEnv creation.
+            version: Version of virtualenv to install.
+            user: virtualenv package should be installed as user.
+            clean: Clean the virtual environment off the system prior to creating a new one, happens if the same virtual environment exists.
+        """
         super().__init__('virtualenv', version=version)
         
         if environment.dependency_exists('virtualenv') == (None, None):
             pip.install(environment, self, user=user)
+        venv_path = Path(environment.name())
+        if venv_path.exists() and clean:
+            os_utils.remove_directory(environment.name())
         if process_utils.create_process(str(environment.python()), f'-m virtualenv {environment.name()}') != 0:
             raise OSError('Failed to create virtual environment.')
         environment._find_interpreter()
